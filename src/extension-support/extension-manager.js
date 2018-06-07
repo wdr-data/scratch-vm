@@ -4,36 +4,7 @@ const maybeFormatMessage = require('../util/maybe-format-message');
 
 const BlockType = require('./block-type');
 
-// These extensions are currently built into the VM repository but should not be loaded at startup.
-// TODO: move these out into a separate repository?
-// TODO: change extension spec so that library info, including extension ID, can be collected through static methods
-const Scratch3PenBlocks = require('../extensions/scratch3_pen');
-const Scratch3WeDo2Blocks = require('../extensions/scratch3_wedo2');
-const Scratch3MusicBlocks = require('../extensions/scratch3_music');
-const Scratch3MicroBitBlocks = require('../extensions/scratch3_microbit');
-const Scratch3Text2SpeechBlocks = require('../extensions/scratch3_text2speech');
-const Scratch3TranslateBlocks = require('../extensions/scratch3_translate');
-const Scratch3VideoSensingBlocks = require('../extensions/scratch3_video_sensing');
-const Scratch3Speech2TextBlocks = require('../extensions/scratch3_speech2text');
-const Scratch3Ev3Blocks = require('../extensions/scratch3_ev3');
-const Scratch3MakeyMakeyBlocks = require('../extensions/scratch3_makeymakey');
-// todo: only load this extension once we have a compatible way to load its
-// Vernier module dependency.
-// const Scratch3GdxForBlocks = require('../extensions/scratch3_gdx_for');
-
-const builtinExtensions = {
-    pen: Scratch3PenBlocks,
-    wedo2: Scratch3WeDo2Blocks,
-    music: Scratch3MusicBlocks,
-    microbit: Scratch3MicroBitBlocks,
-    text2speech: Scratch3Text2SpeechBlocks,
-    translate: Scratch3TranslateBlocks,
-    videoSensing: Scratch3VideoSensingBlocks,
-    speech2text: Scratch3Speech2TextBlocks,
-    ev3: Scratch3Ev3Blocks,
-    makeymakey: Scratch3MakeyMakeyBlocks
-    // gdxfor: Scratch3GdxForBlocks
-};
+const builtinExtensions = {};
 
 /**
  * @typedef {object} ArgumentInfo - Information about an extension block argument
@@ -141,11 +112,13 @@ class ExtensionManager {
         }
 
         return new Promise((resolve, reject) => {
+            // TODO(marcus): Removed for size reasons. Wait for upstream to find a way to dynamically load extensions
+
             // If we `require` this at the global level it breaks non-webpack targets, including tests
-            const ExtensionWorker = require('worker-loader?name=extension-worker.js!./extension-worker');
+            // const ExtensionWorker = require('worker-loader?name=extension-worker.js!./extension-worker');
 
             this.pendingExtensions.push({extensionURL, resolve, reject});
-            dispatch.addWorker(new ExtensionWorker());
+            // dispatch.addWorker(new ExtensionWorker());
         });
     }
 
